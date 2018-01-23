@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GithubRepos</string>
+    <string name="github_username">Github username</string>
+    <string name="error_empty_username">Username must not be empty</string>
+    <string name="repos">Repos</string>
+    <string name="refresh">Refresh</string>
+    <string name="default_username">googlesamples</string>
+</resources>
