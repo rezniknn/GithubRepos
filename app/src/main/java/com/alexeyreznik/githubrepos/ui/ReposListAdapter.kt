@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.alexeyreznik.githubrepos.R
-import com.alexeyreznik.githubrepos.data.Repo
+import com.alexeyreznik.githubrepos.data.models.Repo
+import com.alexeyreznik.githubrepos.utils.ResourcesWrapper
 
 /**
  * Created by alexeyreznik on 23/01/2018.
  */
-class ReposListAdapter : RecyclerView.Adapter<ReposListAdapter.ViewHolder>() {
+class ReposListAdapter(private val resourcesWrapper: ResourcesWrapper) : RecyclerView.Adapter<ReposListAdapter.ViewHolder>() {
 
     val repos = mutableListOf<Repo>()
 
@@ -28,8 +29,10 @@ class ReposListAdapter : RecyclerView.Adapter<ReposListAdapter.ViewHolder>() {
         val repo = repos[position]
         holder?.let {
             it.name.text = repo.name
-            it.language.text = repo.language
-            it.description.text = repo.description
+            it.language.text = String.format("%s: %s", resourcesWrapper.getString(R.string.language), repo.language)
+            it.forks.text = String.format("%s %d", resourcesWrapper.getString(R.string.forks), repo.forks)
+            it.watchers.text = String.format("%s %d", resourcesWrapper.getString(R.string.watchers), repo.forks)
+            it.openIssues.text = String.format("%s %d", resourcesWrapper.getString(R.string.open_issues), repo.forks)
         }
     }
 
@@ -37,6 +40,8 @@ class ReposListAdapter : RecyclerView.Adapter<ReposListAdapter.ViewHolder>() {
         val card: CardView = itemView.findViewById(R.id.card)
         val name: TextView = itemView.findViewById(R.id.name)
         val language: TextView = itemView.findViewById(R.id.language)
-        val description: TextView = itemView.findViewById(R.id.description)
+        val forks: TextView = itemView.findViewById(R.id.forks)
+        val watchers: TextView = itemView.findViewById(R.id.watchers)
+        val openIssues: TextView = itemView.findViewById(R.id.open_issues)
     }
 }

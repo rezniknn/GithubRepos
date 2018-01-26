@@ -5,4 +5,10 @@
     <string name="repos">Repos</string>
     <string name="refresh">Refresh</string>
     <string name="default_username">googlesamples</string>
+    <string name="error_failed_to_load_repositories">Failed to load repositories</string>
+    <string name="language">Language</string>
+    <string name="forks">Forks</string>
+    <string name="watchers">Watchers</string>
+    <string name="open_issues">Open Issues</string>
+    <string name="no_repos">This user does not have any repositories or does not exist</string>
 </resources>

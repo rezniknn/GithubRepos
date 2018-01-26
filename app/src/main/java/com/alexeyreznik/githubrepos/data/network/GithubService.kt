@@ -1,6 +1,6 @@
 package com.alexeyreznik.githubrepos.data.network
 
-import com.alexeyreznik.githubrepos.data.Repo
+import com.alexeyreznik.githubrepos.data.models.Repo
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

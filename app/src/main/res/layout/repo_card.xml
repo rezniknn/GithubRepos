@@ -8,7 +8,10 @@
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
         android:clickable="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground">
@@ -26,27 +29,50 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 tools:text="account-transfer-api" />
 
             <TextView
                 android:id="@+id/language"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/name"
-                android:layout_marginStart="16dp"
+                android:layout_below="@+id/name"
+                android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                tools:text="Java" />
+                tools:text="Language: Java" />
 
             <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
+                android:id="@+id/forks"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/name"
-                android:layout_marginTop="8dp"
+                android:layout_below="@+id/language"
                 android:ellipsize="end"
-                android:maxLines="2"
-                tools:text="Sample app demonstrating use of AccountTransferApi" />
+                android:maxLines="1"
+                tools:text="Forks: 35" />
+
+            <TextView
+                android:id="@+id/watchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/language"
+                android:layout_toEndOf="@id/forks"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Open Issues: 35" />
+
+            <TextView
+                android:id="@+id/open_issues"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/language"
+                android:layout_toEndOf="@id/watchers"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Open Issues: 35" />
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
