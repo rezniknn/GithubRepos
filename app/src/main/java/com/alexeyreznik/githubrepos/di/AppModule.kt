@@ -50,7 +50,9 @@ class AppModule(private val app: Application) {
     @Provides
     @Singleton
     fun provideAppDatabase(context: Context): AppDatabase = Room.databaseBuilder(context,
-            AppDatabase::class.java, "main").build()
+            AppDatabase::class.java, "main")
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton
