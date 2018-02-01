@@ -8,4 +8,9 @@ Key features:
 - Android Architecture Components: LiveData, ViewModel, Room
 - Retrofit2, Moshi
 - Dagger2
-- RecyclerView
+- RecyclerView, Infinite scroll, Multiple ViewTypes
+- Pagination
+
+Screenshots:
+
+![Alt text](./screenshot.png)
