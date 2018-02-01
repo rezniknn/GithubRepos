@@ -48,6 +48,7 @@ dependencies {
     testImplementation "android.arch.persistence.room:testing:1.0.0"
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
     implementation 'com.google.dagger:dagger:2.11'
     kapt 'com.google.dagger:dagger-compiler:2.11'
     implementation 'com.jakewharton.timber:timber:4.6.0'

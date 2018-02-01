@@ -12,6 +12,8 @@ import com.alexeyreznik.githubrepos.utils.SharedPrefs
 import com.alexeyreznik.githubrepos.viewmodels.ReposListViewModelFactory
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -41,7 +43,14 @@ class AppModule(private val app: Application) {
 
     @Provides
     @Singleton
-    fun provideGithubService(): GithubService = Retrofit.Builder()
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideGithubService(okHttpClient: OkHttpClient): GithubService = Retrofit.Builder()
+            .client(okHttpClient)
             .baseUrl("https://api.github.com/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()

@@ -14,15 +14,20 @@ import com.alexeyreznik.githubrepos.data.repositories.ReposRepository
 
 class ReposListViewModel(private val reposRepository: ReposRepository) : ViewModel() {
 
-    private val usernameLiveData = MutableLiveData<String>()
-    var reposListLiveData: LiveData<Resource<List<Repo>>>
+    val usernameLiveData = MutableLiveData<String>()
+    val loadingMoreLiveData = MutableLiveData<Boolean>()
+    var reposLiveData: LiveData<Resource<List<Repo>>>
+    var moreReposLiveData: LiveData<Resource<List<Repo>>?>
 
     init {
-        reposListLiveData = Transformations.switchMap(usernameLiveData,
+        loadingMoreLiveData.value = false
+        reposLiveData = Transformations.switchMap(usernameLiveData,
                 { username -> reposRepository.getUserRepos(username) })
+        moreReposLiveData = Transformations.switchMap(loadingMoreLiveData,
+                { loadMore ->
+                    if (loadMore) usernameLiveData.value?.let { reposRepository.getMoreUserRepos(it) }
+                    else null
+                })
     }
 
-    fun setUsername(username: String) {
-        usernameLiveData.value = username
-    }
 }

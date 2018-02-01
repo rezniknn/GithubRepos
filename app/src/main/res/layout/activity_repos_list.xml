@@ -8,32 +8,24 @@
     android:orientation="vertical"
     tools:context="com.alexeyreznik.githubrepos.ui.ReposListActivity">
 
-    <LinearLayout
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
-        android:paddingTop="16dp"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:paddingTop="16dp">
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="0dp"
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:hint="@string/github_username"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:lines="1" />
 
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/github_username"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:lines="1" />
-
-        </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
+    </android.support.design.widget.TextInputLayout>
 
     <ProgressBar
         android:id="@+id/loading"

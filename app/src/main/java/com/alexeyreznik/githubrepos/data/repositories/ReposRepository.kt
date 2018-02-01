@@ -22,19 +22,56 @@ class ReposRepository(private val appExecutors: AppExecutors,
                       private val appDatabase: AppDatabase,
                       private val service: GithubService) {
 
-    private val result = MediatorLiveData<Resource<List<Repo>>>()
+    private val repos = MediatorLiveData<Resource<List<Repo>>>()
+    private val moreRepos = MutableLiveData<Resource<List<Repo>>>()
+    private var nextPage: Int = 2
+    private var endReached: Boolean = false
 
     fun getUserRepos(username: String): LiveData<Resource<List<Repo>>> {
-        result.value = Resource(status = Status.LOADING)
+        nextPage = 2
+        endReached = false
+        repos.value = Resource(status = Status.LOADING)
         val dbSource = loadFromDB(username)
-        result.addSource(dbSource, { data ->
-            result.removeSource(dbSource)
+        repos.addSource(dbSource, { data ->
+            repos.removeSource(dbSource)
             if (!shouldFetch(data)) {
-                result.value = Resource(status = Status.SUCCESS, data = data)
+                repos.value = Resource(status = Status.SUCCESS, data = data)
                 Timber.d("Database. Items: ${data?.size}")
             } else loadFromNetwork(username)
         })
-        return result
+        return repos
+    }
+
+    fun getMoreUserRepos(username: String): LiveData<Resource<List<Repo>>> {
+        if (endReached) {
+            moreRepos.value = Resource(status = Status.EMPTY)
+            return moreRepos
+        }
+        moreRepos.value = Resource(status = Status.LOADING)
+        appExecutors.networkIO.execute {
+            service.getUserRepos(username, nextPage, ITEMS_PER_NETWORK_PAGE)
+                    .enqueue(object : Callback<List<Repo>> {
+                        override fun onFailure(call: Call<List<Repo>>?, t: Throwable?) {
+                            Timber.e(t.toString())
+                            moreRepos.value = Resource(status = Status.ERROR)
+                        }
+
+                        override fun onResponse(call: Call<List<Repo>>?, response: Response<List<Repo>>?) {
+                            if (response?.isSuccessful == true) {
+                                response.body()?.let {
+                                    moreRepos.value = Resource(status = Status.SUCCESS, data = it)
+                                    if (it.size < ITEMS_PER_NETWORK_PAGE) endReached = true
+                                    else nextPage++
+                                    Timber.d("Network. Items: ${it.size}")
+                                }
+                            } else {
+                                Timber.e(response?.message())
+                                moreRepos.value = Resource(status = Status.ERROR)
+                            }
+                        }
+                    })
+        }
+        return moreRepos
     }
 
     private fun shouldFetch(data: List<Repo>?): Boolean {
@@ -49,31 +86,33 @@ class ReposRepository(private val appExecutors: AppExecutors,
 
     private fun loadFromNetwork(username: String) {
         val networkSource = MutableLiveData<List<Repo>>()
-        result.addSource(networkSource, { data ->
-            result.removeSource(networkSource)
+        repos.addSource(networkSource, { data ->
+            repos.removeSource(networkSource)
             if (data != null) {
                 appExecutors.diskIO.execute { saveToDb(data) }
-                result.value = Resource(data = data, status = Status.SUCCESS)
+                repos.value = Resource(data = data, status = Status.SUCCESS)
                 Timber.d("Network. Items: ${data.size}")
-            } else result.value = Resource(status = Status.ERROR)
+            } else repos.value = Resource(status = Status.ERROR)
         })
 
         appExecutors.networkIO.execute {
-            service.getUserRepos(username).enqueue(object : Callback<List<Repo>> {
-                override fun onFailure(call: Call<List<Repo>>?, t: Throwable?) {
-                    Timber.e(t.toString())
-                    networkSource.value = null
-                }
+            service.getUserRepos(username, 1, ITEMS_PER_NETWORK_PAGE)
+                    .enqueue(object : Callback<List<Repo>> {
+                        override fun onFailure(call: Call<List<Repo>>?, t: Throwable?) {
+                            Timber.e(t.toString())
+                            networkSource.value = null
+                        }
 
-                override fun onResponse(call: Call<List<Repo>>?, response: Response<List<Repo>>?) {
-                    if (response?.isSuccessful == true) {
-                        networkSource.value = response.body()
-                    } else {
-                        Timber.e(response?.message())
-                        networkSource.value = null
-                    }
-                }
-            })
+                        override fun onResponse(call: Call<List<Repo>>?, response: Response<List<Repo>>?) {
+                            if (response?.isSuccessful == true) {
+                                networkSource.value = response.body()
+                                response.body()?.size?.let { if (it < ITEMS_PER_NETWORK_PAGE) endReached = true }
+                            } else {
+                                Timber.e(response?.message())
+                                networkSource.value = null
+                            }
+                        }
+                    })
         }
     }
 
@@ -84,5 +123,6 @@ class ReposRepository(private val appExecutors: AppExecutors,
 
     companion object {
         const val FETCH_TIMEOUT = 60 * 1000L //60 seconds fetch timeout
+        const val ITEMS_PER_NETWORK_PAGE = 30
     }
 }

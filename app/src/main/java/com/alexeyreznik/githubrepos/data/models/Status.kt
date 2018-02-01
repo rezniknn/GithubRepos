@@ -6,5 +6,6 @@ package com.alexeyreznik.githubrepos.data.models
 enum class Status {
     LOADING,
     ERROR,
-    SUCCESS
+    SUCCESS,
+    EMPTY
 }
